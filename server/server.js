@@ -61,6 +61,7 @@ const registerSessionAndRoutes = () => {
   app.use('/api/instagram', require('./routes/instagramRoutes'));
   app.use('/api/messenger', require('./routes/messengerRoutes'));
   app.use('/api/campaigns', campaignRoutes);
+  app.use('/api/feed', require('./routes/feedRoutes'));
   app.use('/api/recommendations', require('./routes/recommendationRoutes'));
   app.use('/api/notifications', notificationRoutes);
   app.use('/api/store', require('./routes/storeRoutes'));

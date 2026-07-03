@@ -10,6 +10,7 @@ import ProfilePage from './pages/ProfilePage';
 import EditProfilePage from './pages/EditProfilePage';
 import MatchesPage from './pages/MatchesPage';
 import DashboardPage from './pages/DashboardPage';
+import InfluencerDashboardPage from './pages/creator/InfluencerDashboardPage';
 import MessagesPage from './pages/MessagesPage';
 import RoleSelectionPage from './pages/RoleSelectionPage';
 import SessionsPage from './pages/SessionsPage';
@@ -32,6 +33,7 @@ import StoreDealManagementPage from './pages/store/StoreDealManagementPage';
 import StoreVisitWorkspacePage from './pages/creator/StoreVisitWorkspacePage';
 import StoreProfilePage from './pages/creator/StoreProfilePage';
 import BrowseStoresPage from './pages/creator/BrowseStoresPage';
+import StoreDealDetailPage from './pages/creator/StoreDealDetailPage';
 
 const postAuthPath = (user) => {
   if (!user.onboardingComplete) return '/onboarding';
@@ -78,16 +80,18 @@ const App = () => {
         <Route path="/sessions" element={<ProtectedRoute requireOnboarding><SessionsPage /></ProtectedRoute>} />
         <Route path="/matches" element={<ProtectedRoute requireOnboarding><MatchesPage /></ProtectedRoute>} />
         <Route path="/messages" element={<ProtectedRoute requireOnboarding><MessagesPage /></ProtectedRoute>} />
-        <Route path="/dashboard" element={<ProtectedRoute requireOnboarding><DashboardPage /></ProtectedRoute>} />
+        {/* /dashboard: smart redirect — creators go to influencer dashboard, everyone else to generic */}
+        <Route path="/dashboard" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['creator', 'influencer']) ? <InfluencerDashboardPage /> : <DashboardPage />}</ProtectedRoute>} />
         <Route path="/brand/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-        <Route path="/creator/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+        <Route path="/creator/dashboard" element={<ProtectedRoute>{hasRole(user, ['creator', 'influencer']) ? <InfluencerDashboardPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         <Route path="/brand/campaigns" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['brand']) ? <CampaignListPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         <Route path="/brand/campaigns/new" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['brand']) ? <CampaignCreatePage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         <Route path="/brand/campaigns/:id/dashboard" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['brand']) ? <CampaignDashboardPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         <Route path="/brand/campaigns/:id/edit" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['brand']) ? <CampaignEditPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         <Route path="/creator/deals" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['creator', 'influencer']) ? <DealDiscoveryPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         <Route path="/creator/deals/:id" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['creator', 'influencer']) ? <DealDetailPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
-        <Route path="/creator/campaigns" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['creator', 'influencer']) ? <MyCampaignsPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
+        {/* /creator/campaigns now redirects to the merged dashboard */}
+        <Route path="/creator/campaigns" element={<ProtectedRoute requireOnboarding><Navigate to="/creator/dashboard" replace /></ProtectedRoute>} />
         <Route path="/signup/store" element={!user ? <StoreSignupPage /> : <Navigate to={postAuthPath(user)} replace />} />
         <Route path="/creator/campaigns/:id/workspace" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['creator', 'influencer']) ? <CampaignWorkspacePage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         {/* ─── Store routes ─── */}
@@ -97,6 +101,7 @@ const App = () => {
         <Route path="/store/deals/:id" element={<ProtectedRoute>{hasRole(user, ['store']) ? <StoreDealManagementPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         {/* ─── Creator store routes ─── */}
         <Route path="/creator/stores" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['creator', 'influencer']) ? <BrowseStoresPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
+        <Route path="/creator/store-deals/:id" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['creator', 'influencer']) ? <StoreDealDetailPage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         <Route path="/creator/store-visits/:dealId" element={<ProtectedRoute requireOnboarding>{hasRole(user, ['creator', 'influencer']) ? <StoreVisitWorkspacePage /> : <Navigate to="/feed" replace />}</ProtectedRoute>} />
         <Route path="/store/:storeId" element={<ProtectedRoute requireOnboarding><StoreProfilePage /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />

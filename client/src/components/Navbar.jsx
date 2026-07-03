@@ -32,7 +32,15 @@ const Navbar = () => {
       items.splice(1, 0, { to: '/brand/campaigns', label: 'Campaigns' });
     }
     if (user?.role === 'creator' || user?.role === 'influencer') {
-      items.splice(1, 0, { to: '/creator/deals', label: 'Deals' }, { to: '/creator/campaigns', label: 'My Campaigns' }, { to: '/creator/stores', label: 'Stores' });
+      // Discover → /creator/deals (unified feed)
+      // Dashboard → /creator/dashboard (merged campaigns + stats)
+      // Remove generic /feed, /matches; replace with creator-specific nav
+      items.splice(0, items.length,
+        { to: '/creator/deals', label: 'Discover' },
+        { to: '/creator/dashboard', label: 'Dashboard' },
+        { to: '/messages', label: 'Messages' },
+        { to: '/profile', label: 'Profile' },
+      );
     }
     return items;
   }, [user?.role]);

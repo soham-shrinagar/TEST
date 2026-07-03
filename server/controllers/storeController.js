@@ -5,6 +5,7 @@ const Profile = require('../models/Profile');
 const { createNotification } = require('../services/notificationService');
 const { uploadFile } = require('../services/storageService');
 const cache = require('../services/cacheService');
+const { trackEvent } = require('../services/recommendationService');
 const multer = require('multer');
 
 const creatorRoles = ['creator', 'influencer'];
@@ -493,6 +494,8 @@ const getPublicDeal = async (req, res) => {
         storeDeal: deal._id,
         creator: req.user._id,
       });
+      // Track view event for recommendation scoring
+      trackEvent(req.user._id, deal._id, 'StoreDeal', 'view').catch(() => {});
     }
 
     return res.json({ deal, store, application });
@@ -531,6 +534,9 @@ const applyToDeal = async (req, res) => {
     });
 
     await StoreDeal.findByIdAndUpdate(deal._id, { $inc: { 'stats.totalApplications': 1 } });
+
+    // Track apply event for recommendation scoring
+    trackEvent(req.user._id, deal._id, 'StoreDeal', 'apply').catch(() => {});
 
     // Notify store
     const store = await User.findById(deal.store).select('storeProfile');
@@ -741,13 +747,9 @@ const getCreatorStoreWorkspace = async (req, res) => {
     });
     if (!application) return res.status(404).json({ message: 'Application not found' });
 
-    const [deal, store] = await Promise.all([
-      StoreDeal.findById(req.params.dealId),
-      User.findById(application.storeDeal ? (await StoreDeal.findById(req.params.dealId).select('store')).store : null)
-        .select('storeProfile name'),
-    ]);
+    const deal = await StoreDeal.findById(req.params.dealId);
+    if (!deal) return res.status(404).json({ message: 'Deal not found' });
 
-    // Resolve store separately
     const storeUser = await User.findById(deal.store).select('storeProfile name');
     return res.json({ deal, application, store: storeUser });
   } catch (error) {

@@ -347,7 +347,7 @@ const discoverCampaigns = async (req, res) => {
     if (cached) return res.json(cached);
     const existing = await CampaignApplication.find({ creator: req.user._id }).select('campaign');
     const excludedCampaigns = existing.map((application) => application.campaign);
-    const filter = { status: 'active', _id: { $nin: excludedCampaigns } };
+    const filter = { status: 'active', _id: { $nin: excludedCampaigns }, applicationDeadline: { $gt: new Date() } };
     if (req.query.minPay) filter.budgetPerCreator = { ...filter.budgetPerCreator, $gte: Number(req.query.minPay) };
     if (req.query.maxPay) filter.budgetPerCreator = { ...filter.budgetPerCreator, $lte: Number(req.query.maxPay) };
     if (req.query.niche) filter['requirements.niches'] = req.query.niche;

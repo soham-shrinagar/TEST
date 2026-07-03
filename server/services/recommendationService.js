@@ -394,12 +394,27 @@ const getRecommendationsForUser = async (userId, userType, limit = 20, contextKe
   }
 
   RecommendationCache.deleteOne({ userId, contextKey }).catch(() => {});
-  const recommendations = userType === 'brand'
-    ? await generateForBrand(userId, null, contextKey)
-    : await generateForCreator(userId);
+
+  if (userType === 'brand') {
+    const recommendations = await generateForBrand(userId, null, contextKey);
+    return {
+      recommendations: recommendations.slice(0, limit),
+      generatedAt: new Date(),
+      fromCache: false,
+    };
+  }
+
+  // For creators/influencers: merge campaign recs + store deal recs
+  const [campaignRecs, storeRecs] = await Promise.all([
+    generateForCreator(userId),
+    generateStoreDealsForCreator(userId),
+  ]);
+
+  // Merge and re-sort by score descending
+  const merged = [...campaignRecs, ...storeRecs].sort((a, b) => b.score - a.score);
 
   return {
-    recommendations: recommendations.slice(0, limit),
+    recommendations: merged.slice(0, limit),
     generatedAt: new Date(),
     fromCache: false,
   };

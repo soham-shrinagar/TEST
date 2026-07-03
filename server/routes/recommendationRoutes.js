@@ -23,19 +23,56 @@ const enrichRecommendations = async (recommendations) => {
   const campaignIds = recommendations
     .filter((item) => item.targetModel === 'Campaign')
     .map((item) => item.targetId);
+  const storeDealIds = recommendations
+    .filter((item) => item.targetModel === 'StoreDeal')
+    .map((item) => item.targetId);
 
-  const [profiles, campaigns] = await Promise.all([
+  const StoreDeal = require('../models/StoreDeal');
+  const User = require('../models/User');
+
+  const [profiles, campaigns, storeDeals] = await Promise.all([
     Profile.find({ user: { $in: userIds } }).populate('user', 'name role profile_pic instagram_profile_pic instagram_handle follower_count engagement_rate instagram_verified'),
     Campaign.find({ _id: { $in: campaignIds } }).populate('brand', 'name profile_pic instagram_profile_pic'),
+    StoreDeal.find({ _id: { $in: storeDealIds } }),
   ]);
+
+  // For store deals, fetch the store User info
+  const storeIds = storeDeals.map((deal) => deal.store);
+  const storeUsers = storeIds.length
+    ? await User.find({ _id: { $in: storeIds } }).select('storeProfile name')
+    : [];
+  const storeUserMap = new Map(storeUsers.map((s) => [s._id.toString(), s]));
+
   const profileMap = new Map(profiles.map((profile) => [profile.user._id.toString(), profile]));
   const campaignMap = new Map(campaigns.map((campaign) => [campaign._id.toString(), campaign]));
+  const storeDealMap = new Map(storeDeals.map((deal) => [deal._id.toString(), deal]));
 
   return recommendations.map((item) => {
     const object = item.toObject ? item.toObject() : item;
-    const target = object.targetModel === 'User'
-      ? profileMap.get(object.targetId.toString())
-      : campaignMap.get(object.targetId.toString());
+    let target;
+    if (object.targetModel === 'User') {
+      target = profileMap.get(object.targetId.toString());
+    } else if (object.targetModel === 'Campaign') {
+      target = campaignMap.get(object.targetId.toString());
+    } else if (object.targetModel === 'StoreDeal') {
+      const deal = storeDealMap.get(object.targetId.toString());
+      if (deal) {
+        const storeUser = storeUserMap.get(deal.store.toString());
+        target = {
+          ...deal.toObject(),
+          storeInfo: storeUser ? {
+            _id: storeUser._id,
+            storeName: storeUser.storeProfile?.storeName || storeUser.name,
+            storeType: storeUser.storeProfile?.storeType,
+            city: storeUser.storeProfile?.address?.city,
+            logoImage: storeUser.storeProfile?.logoImage,
+            storeVerified: storeUser.storeProfile?.storeVerified,
+            averageRating: storeUser.storeProfile?.averageRating,
+            totalReviews: storeUser.storeProfile?.totalReviews,
+          } : null,
+        };
+      }
+    }
     return { ...object, target };
   }).filter((item) => item.target);
 };
@@ -165,7 +202,7 @@ router.get('/campaign/:campaignId', async (req, res) => {
 router.post('/event', async (req, res) => {
   try {
     const { targetId, targetModel, eventType, metadata } = req.body;
-    if (!targetId || !['User', 'Campaign'].includes(targetModel) || !allowedEvents.includes(eventType)) {
+    if (!targetId || !['User', 'Campaign', 'StoreDeal'].includes(targetModel) || !allowedEvents.includes(eventType)) {
       return res.status(400).json({ message: 'Invalid recommendation event' });
     }
     await recommendationService.trackEvent(req.user._id, targetId, targetModel, eventType, metadata || {});
