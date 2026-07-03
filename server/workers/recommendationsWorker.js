@@ -12,9 +12,12 @@ const worker = new Worker('recommendations', async (job) => {
     }
 
     if (job.name === 'generate-creator') {
-      const result = await recommendationService.generateForCreator(job.data.userId);
+      const [campaignRecs, storeRecs] = await Promise.all([
+        recommendationService.generateForCreator(job.data.userId),
+        recommendationService.generateStoreDealsForCreator(job.data.userId),
+      ]);
       await delPattern(`recommendations:${job.data.userId}:*`);
-      return result;
+      return { campaignRecs, storeRecs };
     }
 
     throw new Error(`Unknown recommendations job: ${job.name}`);

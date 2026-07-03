@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
-import { daysUntil, deliverableRows, money, niches } from '../../components/campaignUtils';
-import RecommendedCampaignCard from '../../components/RecommendedCampaignCard';
-import { useAuth } from '../../context/AuthContext';
-import useRecommendations from '../../hooks/useRecommendations';
+import { money, daysUntil, Badge } from '../../components/campaignUtils';
+
+const NICHES = [
+  'Lifestyle', 'Sports', 'Fashion', 'Travel', 'Tech',
+  'Food & Beverage', 'Gaming', 'Health & Fitness', 'Beauty',
+  'Finance', 'Education', 'Entertainment', 'Cafe Hopping',
+  'Food Review', 'Local Exploration',
+];
 
 const OFFER_TYPE_LABELS = {
   free_meal: '🍽️ Free Meal',
@@ -13,277 +17,302 @@ const OFFER_TYPE_LABELS = {
   combo: '🤝 Meal + Fee',
 };
 
-const StoreDealCard = ({ deal, onApply }) => {
-  const applied = deal.applicationStatus;
+// ─── Campaign card ─────────────────────────────────────────────────────────────
+const CampaignCard = ({ item }) => {
+  const { data: campaign, score, reasons } = item;
+  const brand = campaign.brandProfile || campaign.brand || {};
+  const endsIn = daysUntil(campaign.applicationDeadline);
+
+  return (
+    <article className="panel flex flex-col p-5">
+      <div className="flex gap-3">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ink text-base font-extrabold text-white">
+          {(brand.displayName || brand.name || 'B').slice(0, 1)}
+        </div>
+        <div className="min-w-0">
+          <p className="truncate font-extrabold text-ink">{brand.displayName || brand.name || 'Brand'}</p>
+          <p className="text-sm font-bold text-ink/45">Brand Campaign</p>
+        </div>
+        {score != null && (
+          <span className="ml-auto shrink-0 self-start rounded-full bg-[#d9f7ec] px-2.5 py-1 text-xs font-extrabold text-[#0f7655]">
+            {score}% match
+          </span>
+        )}
+      </div>
+
+      <h2 className="mt-4 text-xl font-extrabold text-ink leading-tight">{campaign.title}</h2>
+      <p className="mt-2 text-sm leading-6 text-ink/58 line-clamp-2">{campaign.description}</p>
+
+      {reasons?.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {reasons.slice(0, 2).map((r) => (
+            <span key={r} className="rounded-full bg-ink/[0.04] px-2.5 py-1 text-[11px] font-bold text-ink/50">{r}</span>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-auto pt-5 flex items-center justify-between gap-3">
+        <div>
+          <p className="label">Pay</p>
+          <p className="text-xl font-extrabold text-[#0f7655]">{money(campaign.budgetPerCreator)}</p>
+        </div>
+        {endsIn != null && (
+          <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${endsIn < 3 ? 'bg-[#ffe1df] text-[#a8322b]' : 'bg-ink/[0.06] text-ink/55'}`}>
+            {endsIn <= 0 ? 'Closing soon' : `${endsIn}d left`}
+          </span>
+        )}
+      </div>
+
+      <Link to={`/creator/deals/${campaign._id}`} className="btn-primary mt-4 text-center">
+        View Campaign
+      </Link>
+    </article>
+  );
+};
+
+// ─── Store deal card ───────────────────────────────────────────────────────────
+const StoreDealCard = ({ item }) => {
+  const { data: deal, score, reasons } = item;
+  const store = deal.storeInfo || {};
   const spotsLeft = deal.spotsRemaining ?? deal.requirements?.maxCreators ?? 5;
 
   return (
-    <article className="panel p-5">
-      <div className="flex gap-4">
-        {deal.storeInfo?.logoImage ? (
-          <img src={deal.storeInfo.logoImage} alt={deal.storeInfo.storeName} className="h-14 w-14 shrink-0 rounded-full object-cover" />
+    <article className="panel flex flex-col p-5">
+      <div className="flex gap-3">
+        {store.logoImage ? (
+          <img src={store.logoImage} alt={store.storeName} className="h-12 w-12 shrink-0 rounded-full object-cover" />
         ) : (
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#4140c8] text-xl font-extrabold text-white">
-            {(deal.storeInfo?.storeName || deal.title || 'S').slice(0, 1)}
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#4140c8] text-base font-extrabold text-white">
+            {(store.storeName || deal.title || 'S').slice(0, 1)}
           </div>
         )}
         <div className="min-w-0">
-          <p className="font-extrabold text-ink">
-            {deal.storeInfo?.storeName || 'Store'}
-            {deal.storeInfo?.storeVerified && <span className="ml-1.5 text-[#4140c8]">✓</span>}
+          <p className="truncate font-extrabold text-ink">
+            {store.storeName || 'Store'}
+            {store.storeVerified && <span className="ml-1 text-[#4140c8]">✓</span>}
           </p>
-          <p className="text-sm font-bold text-ink/45">{deal.storeInfo?.city || deal.requirements?.location || 'Local'}</p>
+          <p className="text-sm font-bold text-ink/45">{store.city || deal.requirements?.location || 'Local'}</p>
         </div>
+        {score != null && (
+          <span className="ml-auto shrink-0 self-start rounded-full bg-[#e9ebff] px-2.5 py-1 text-xs font-extrabold text-[#4140c8]">
+            {score}% match
+          </span>
+        )}
       </div>
 
-      <h2 className="mt-4 text-xl font-extrabold text-ink">{deal.title}</h2>
-      <p className="mt-2 text-sm leading-6 text-ink/60 line-clamp-2">{deal.description}</p>
+      <h2 className="mt-4 text-xl font-extrabold text-ink leading-tight">{deal.title}</h2>
+      <p className="mt-2 text-sm leading-6 text-ink/58 line-clamp-2">{deal.description}</p>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-1.5">
         <span className="rounded-full bg-[#e9ebff] px-3 py-1 text-xs font-bold text-[#4140c8]">
           {OFFER_TYPE_LABELS[deal.offerType] || deal.offerType}
         </span>
         {deal.flatFeeAmount > 0 && (
           <span className="rounded-full bg-[#d9f7ec] px-3 py-1 text-xs font-bold text-[#0f7655]">
-            {money(deal.flatFeeAmount)} cash
+            {money(deal.flatFeeAmount)}
           </span>
         )}
-        {deal.deliverables?.reels > 0 && <span className="rounded-full bg-ink/[0.06] px-3 py-1 text-xs font-bold">{deal.deliverables.reels} Reel{deal.deliverables.reels > 1 ? 's' : ''}</span>}
-        {deal.deliverables?.stories > 0 && <span className="rounded-full bg-ink/[0.06] px-3 py-1 text-xs font-bold">{deal.deliverables.stories} Story</span>}
-        {deal.deliverables?.staticPosts > 0 && <span className="rounded-full bg-ink/[0.06] px-3 py-1 text-xs font-bold">{deal.deliverables.staticPosts} Post{deal.deliverables.staticPosts > 1 ? 's' : ''}</span>}
+        {reasons?.slice(0, 1).map((r) => (
+          <span key={r} className="rounded-full bg-ink/[0.04] px-2.5 py-1 text-[11px] font-bold text-ink/50">{r}</span>
+        ))}
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-3">
-        <p className="text-xs font-bold text-ink/45">{spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} remaining</p>
-        {deal.storeInfo?.averageRating > 0 && (
-          <p className="text-xs font-bold text-[#f59e0b]">★ {deal.storeInfo.averageRating} ({deal.storeInfo.totalReviews})</p>
+      <div className="mt-auto pt-5 flex items-center justify-between gap-2">
+        <p className="text-xs font-bold text-ink/45">{spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left</p>
+        {store.averageRating > 0 && (
+          <p className="text-xs font-bold text-[#f59e0b]">★ {store.averageRating}</p>
         )}
       </div>
 
-      <div className="mt-4">
-        {applied ? (
-          applied === 'accepted' ? (
-            <Link to={`/creator/store-visits/${deal._id}`} className="btn-primary w-full">Open Workspace</Link>
-          ) : (
-            <button type="button" disabled className="btn-secondary w-full capitalize">{applied === 'pending' ? 'Applied — Pending' : applied}</button>
-          )
-        ) : spotsLeft <= 0 ? (
-          <button type="button" disabled className="btn-secondary w-full">Full</button>
-        ) : (
-          <Link to={`/creator/store-deals/${deal._id}`} className="btn-primary w-full">View Deal</Link>
-        )}
-      </div>
+      <Link to={`/creator/store-deals/${deal._id}`} className="btn-primary mt-4 text-center">
+        View Deal
+      </Link>
     </article>
   );
 };
 
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+const Skeleton = () => (
+  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <div key={i} className="h-72 animate-pulse rounded-lg border border-ink/10 bg-white" />
+    ))}
+  </div>
+);
+
+// ─── Main page ─────────────────────────────────────────────────────────────────
 const DealDiscoveryPage = () => {
-  const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('brand');
-  // Brand campaigns state
-  const [campaigns, setCampaigns] = useState([]);
-  const [filters, setFilters] = useState({ contentType: '', niche: '', location: '', minPay: '', maxPay: '', sort: 'newest' });
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { recommendations, loading: recommendationsLoading, registerView, trackEvent } = useRecommendations(20);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  // Store deals state
-  const [storeDeals, setStoreDeals] = useState([]);
-  const [storeFilters, setStoreFilters] = useState({ city: '', niche: '', offerType: '', minPay: '', sort: 'newest' });
-  const [storeLoading, setStoreLoading] = useState(false);
-  const [storeError, setStoreError] = useState('');
+  // Filters
+  const [typeFilter, setTypeFilter] = useState('');   // '' | 'campaign' | 'store_deal'
+  const [niche, setNiche] = useState('');
+  const [city, setCity] = useState('');
+
+  const queryString = useMemo(() => {
+    const params = new URLSearchParams();
+    if (typeFilter) params.set('type', typeFilter);
+    if (niche) params.set('niche', niche);
+    if (city) params.set('city', city);
+    params.set('limit', '18');
+    params.set('page', String(page));
+    return params.toString();
+  }, [typeFilter, niche, city, page]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setPage(1);
+    setItems([]);
+  }, [typeFilter, niche, city]);
 
   useEffect(() => {
-    const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => { if (value) params.set(key, value); });
-    setLoading(true);
-    api.get(`/campaigns/discover?${params.toString()}`)
-      .then(({ data }) => setCampaigns(data))
+    if (page === 1) {
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
+    setError('');
+
+    api.get(`/feed/discover?${queryString}`)
+      .then(({ data }) => {
+        if (page === 1) {
+          setItems(data.items || []);
+        } else {
+          setItems((prev) => [...prev, ...(data.items || [])]);
+        }
+        setHasMore(data.hasMore || false);
+      })
       .catch((err) => setError(err.response?.data?.message || 'Could not load deals'))
-      .finally(() => setLoading(false));
-  }, [filters]);
+      .finally(() => {
+        setLoading(false);
+        setLoadingMore(false);
+      });
+  }, [queryString]);
 
-  useEffect(() => {
-    if (activeTab !== 'store') return;
-    const params = new URLSearchParams();
-    Object.entries(storeFilters).forEach(([key, value]) => { if (value) params.set(key, value); });
-    setStoreLoading(true);
-    api.get(`/store/discover?${params.toString()}`)
-      .then(({ data }) => setStoreDeals(data))
-      .catch((err) => setStoreError(err.response?.data?.message || 'Could not load store deals'))
-      .finally(() => setStoreLoading(false));
-  }, [activeTab, storeFilters]);
-
-  const update = (key, value) => setFilters((c) => ({ ...c, [key]: value }));
-  const updateStore = (key, value) => setStoreFilters((c) => ({ ...c, [key]: value }));
+  const hasFilters = typeFilter || niche || city;
 
   return (
     <div className="page-shell">
+      {/* Header */}
       <div className="border-b border-ink/10 pb-6">
-        <div className="eyebrow">Creator Deals</div>
-        <h1 className="mt-4 page-title">Open Deals</h1>
+        <div className="eyebrow">Discover</div>
+        <h1 className="mt-4 page-title">All Deals</h1>
+        <p className="page-lead max-w-lg">
+          Brand campaigns and local store visits — ranked for you, all in one place.
+        </p>
       </div>
 
-      {/* Tab switcher */}
-      <div className="mt-6 flex gap-2">
-        <button
-          type="button"
-          onClick={() => setActiveTab('brand')}
-          className={`rounded-full px-5 py-2 text-sm font-bold transition ${activeTab === 'brand' ? 'bg-ink text-white' : 'border border-ink/10 bg-white text-ink/55'}`}
+      {/* Filter bar */}
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        {/* Type toggle */}
+        <div className="flex gap-2">
+          {[
+            { value: '', label: 'All' },
+            { value: 'campaign', label: '📣 Campaigns' },
+            { value: 'store_deal', label: '☕ Store Visits' },
+          ].map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setTypeFilter(opt.value)}
+              className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                typeFilter === opt.value
+                  ? 'bg-ink text-white'
+                  : 'border border-ink/10 bg-white text-ink/55 hover:border-ink/25 hover:text-ink'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        <select
+          className="field sm:w-48"
+          value={niche}
+          onChange={(e) => setNiche(e.target.value)}
+          aria-label="Niche filter"
         >
-          Brand Campaigns
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('store')}
-          className={`rounded-full px-5 py-2 text-sm font-bold transition ${activeTab === 'store' ? 'bg-ink text-white' : 'border border-ink/10 bg-white text-ink/55'}`}
-        >
-          Store Visits ☕
-        </button>
+          <option value="">All niches</option>
+          {NICHES.map((n) => <option key={n} value={n}>{n}</option>)}
+        </select>
+
+        <input
+          className="field sm:w-48"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder="City…"
+          aria-label="City filter"
+        />
+
+        {hasFilters && (
+          <button
+            type="button"
+            className="btn-secondary text-sm"
+            onClick={() => { setTypeFilter(''); setNiche(''); setCity(''); }}
+          >
+            Clear filters
+          </button>
+        )}
       </div>
 
-      {/* Brand Campaigns Tab */}
-      {activeTab === 'brand' && (
-        <>
-          {recommendations.length ? (
-            <section className="mt-6">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <h2 className="text-2xl font-extrabold text-ink">Deals you&apos;ll love</h2>
-              </div>
-              <div className="flex gap-4 overflow-x-auto pb-2">
-                {recommendations.slice(0, 5).map((recommendation) => (
-                  <RecommendedCampaignCard
-                    key={recommendation.targetId}
-                    recommendation={recommendation}
-                    registerView={registerView}
-                    onTrack={trackEvent}
-                  />
-                ))}
-              </div>
-            </section>
-          ) : recommendationsLoading ? (
-            <div className="mt-6 flex gap-4 overflow-hidden">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="h-72 min-w-[18rem] animate-pulse rounded-lg border border-ink/10 bg-white" />
-              ))}
-            </div>
-          ) : null}
-
-          <div className="mt-6 grid gap-3 rounded-lg border border-ink/10 bg-white/85 p-4 lg:grid-cols-6">
-            <select className="field" value={filters.contentType} onChange={(e) => update('contentType', e.target.value)}>
-              <option value="">Any content</option>
-              <option value="reel">Reels</option>
-              <option value="story">Stories</option>
-              <option value="static_post">Static Posts</option>
-            </select>
-            <input className="field" type="number" placeholder="Min pay" value={filters.minPay} onChange={(e) => update('minPay', e.target.value)} />
-            <input className="field" type="number" placeholder="Max pay" value={filters.maxPay} onChange={(e) => update('maxPay', e.target.value)} />
-            <select className="field" value={filters.niche} onChange={(e) => update('niche', e.target.value)}>
-              <option value="">All niches</option>
-              {niches.map((niche) => <option key={niche} value={niche}>{niche}</option>)}
-            </select>
-            <input className="field" placeholder="Location" value={filters.location} onChange={(e) => update('location', e.target.value)} />
-            <select className="field" value={filters.sort} onChange={(e) => update('sort', e.target.value)}>
-              <option value="newest">Newest</option>
-              <option value="highest_pay">Highest Pay</option>
-              <option value="deadline">Deadline Soonest</option>
-            </select>
+      {/* Content */}
+      <div className="mt-8">
+        {error && (
+          <div className="mb-6 rounded-lg border border-[#d64f4f]/25 bg-[#fff0ef] px-4 py-3 text-sm font-bold text-[#a8322b]">
+            {error}
           </div>
+        )}
 
-          {error ? <div className="mt-5 rounded-lg border border-[#d64f4f]/25 bg-[#fff0ef] px-4 py-3 text-sm font-bold text-[#a8322b]">{error}</div> : null}
-
-          {loading ? (
-            <div className="mt-6 grid gap-4 md:grid-cols-2">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-72 animate-pulse rounded-lg border border-ink/10 bg-white" />)}</div>
-          ) : campaigns.length ? (
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {campaigns.map((campaign) => {
-                const minFollowers = campaign.requirements?.minFollowers || 0;
-                const followerCount = user?.follower_count || 0;
-                const blocked = minFollowers > followerCount;
-                const endsIn = daysUntil(campaign.applicationDeadline);
-                return (
-                  <article key={campaign._id} className={`panel p-5 ${blocked ? 'opacity-60' : ''}`}>
-                    <div className="flex gap-4">
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-ink text-lg font-extrabold text-white">
-                        {(campaign.brandProfile?.displayName || campaign.brand?.name || 'B').slice(0, 1)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-extrabold text-ink">{campaign.brandProfile?.displayName || campaign.brand?.name || 'Brand'}</p>
-                        <p className="text-sm font-bold text-ink/45">{campaign.brandProfile?.brandCategory || 'Brand campaign'}</p>
-                      </div>
-                    </div>
-                    <h2 className="mt-5 text-2xl font-extrabold text-ink">{campaign.title}</h2>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {deliverableRows(campaign).map((item) => <span key={item.key} className="rounded-full bg-ink/[0.06] px-3 py-1 text-xs font-bold">{item.label} x {item.count}</span>)}
-                    </div>
-                    <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="label">Pay per creator</p>
-                        <p className="text-2xl font-extrabold text-[#0f7655]">{money(campaign.budgetPerCreator)}</p>
-                      </div>
-                      <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${endsIn !== null && endsIn < 3 ? 'bg-[#ffe1df] text-[#a8322b]' : 'bg-ink/[0.06] text-ink/55'}`}>
-                        {endsIn === null ? 'Deadline open' : `Ends in ${endsIn} days`}
-                      </span>
-                    </div>
-                    <div className="mt-5">
-                      {blocked ? (
-                        <button type="button" disabled className="btn-secondary w-full">Requires {minFollowers.toLocaleString('en-IN')} followers</button>
-                      ) : (
-                        <Link className="btn-primary w-full" to={`/creator/deals/${campaign._id}`}>View Deal</Link>
-                      )}
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="panel mt-6 p-8 text-center">
-              <h2 className="text-2xl font-extrabold">No open deals match your filters</h2>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Store Deals Tab */}
-      {activeTab === 'store' && (
-        <>
-          <div className="mt-6 grid gap-3 rounded-lg border border-ink/10 bg-white/85 p-4 lg:grid-cols-5">
-            <input className="field" placeholder="City" value={storeFilters.city} onChange={(e) => updateStore('city', e.target.value)} />
-            <select className="field" value={storeFilters.niche} onChange={(e) => updateStore('niche', e.target.value)}>
-              <option value="">All niches</option>
-              {niches.map((n) => <option key={n} value={n}>{n}</option>)}
-            </select>
-            <select className="field" value={storeFilters.offerType} onChange={(e) => updateStore('offerType', e.target.value)}>
-              <option value="">Any offer</option>
-              <option value="free_meal">Free Meal</option>
-              <option value="flat_fee">Flat Fee</option>
-              <option value="discount_voucher">Voucher</option>
-              <option value="combo">Combo</option>
-            </select>
-            <input className="field" type="number" placeholder="Min cash (INR)" value={storeFilters.minPay} onChange={(e) => updateStore('minPay', e.target.value)} />
-            <select className="field" value={storeFilters.sort} onChange={(e) => updateStore('sort', e.target.value)}>
-              <option value="newest">Newest</option>
-              <option value="highest_value">Highest Value</option>
-              <option value="most_slots">Most Slots</option>
-            </select>
+        {loading ? (
+          <Skeleton />
+        ) : items.length === 0 ? (
+          <div className="panel p-12 text-center">
+            <p className="text-2xl font-extrabold text-ink">Nothing matches your filters</p>
+            <p className="mt-3 text-sm font-bold text-ink/45">
+              Try removing the niche or city filter, or switch between campaigns and store visits.
+            </p>
+            {hasFilters && (
+              <button
+                type="button"
+                className="btn-primary mt-6"
+                onClick={() => { setTypeFilter(''); setNiche(''); setCity(''); }}
+              >
+                Clear all filters
+              </button>
+            )}
           </div>
-
-          {storeError ? <div className="mt-5 rounded-lg border border-[#d64f4f]/25 bg-[#fff0ef] px-4 py-3 text-sm font-bold text-[#a8322b]">{storeError}</div> : null}
-
-          {storeLoading ? (
-            <div className="mt-6 grid gap-4 md:grid-cols-2">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-72 animate-pulse rounded-lg border border-ink/10 bg-white" />)}</div>
-          ) : storeDeals.length ? (
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {storeDeals.map((deal) => <StoreDealCard key={deal._id} deal={deal} />)}
+        ) : (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {items.map((item, i) =>
+                item.type === 'campaign' ? (
+                  <CampaignCard key={`c-${item.data._id}-${i}`} item={item} />
+                ) : (
+                  <StoreDealCard key={`d-${item.data._id}-${i}`} item={item} />
+                )
+              )}
             </div>
-          ) : (
-            <div className="panel mt-6 p-8 text-center">
-              <h2 className="text-2xl font-extrabold">No store deals in your area yet</h2>
-              <p className="mt-2 text-ink/55">Try adjusting your city filter or check back soon.</p>
-            </div>
-          )}
-        </>
-      )}
+
+            {hasMore && (
+              <div className="mt-8 flex justify-center">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  disabled={loadingMore}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  {loadingMore ? 'Loading…' : 'Load more'}
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
