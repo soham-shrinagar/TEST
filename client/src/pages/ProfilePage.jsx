@@ -142,7 +142,7 @@ const InstagramProfileStats = ({ user, canRefresh = false, onRefresh, refreshing
             <span>Last synced {getRelativeTime(user.instagram_last_synced_at)}</span>
             <div className="flex flex-wrap gap-3">
               {canRefresh ? (
-                <button type="button" onClick={onRefresh} disabled={refreshing} className="font-extrabold text-[#4140c8] disabled:opacity-50">
+                <button type="button" onClick={onRefresh} disabled={refreshing} className="font-extrabold text-accent disabled:opacity-50">
                   {refreshing ? 'Refreshing...' : 'Refresh stats'}
                 </button>
               ) : null}
@@ -150,7 +150,7 @@ const InstagramProfileStats = ({ user, canRefresh = false, onRefresh, refreshing
                 href={`https://www.instagram.com/${user.instagram_handle}/`}
                 target="_blank"
                 rel="noreferrer"
-                className="font-extrabold text-[#4140c8]"
+                className="font-extrabold text-accent"
               >
                 View on Instagram
               </a>
@@ -326,7 +326,7 @@ const ProfilePage = () => {
         <div className="grid lg:grid-cols-[340px_1fr]">
           <div className="relative min-h-[20rem] overflow-hidden bg-ink lg:min-h-[28rem]">
             <img src={avatarSrc} alt={profile.displayName} className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#08070b]/50 via-transparent to-transparent lg:hidden" />
+            <div className="absolute inset-0 bg-ink/40 lg:hidden" />
           </div>
 
           <div className="p-5 sm:p-8">
@@ -344,7 +344,7 @@ const ProfilePage = () => {
             <h1 className="mt-5 text-4xl font-extrabold leading-none text-ink sm:text-5xl">
               {profile.displayName}
             </h1>
-            {profile.handle ? <p className="mt-2 text-base font-bold text-[#4140c8]">{profile.handle}</p> : null}
+            {profile.handle ? <p className="mt-2 text-base font-bold text-accent">{profile.handle}</p> : null}
             <p className="mt-4 max-w-2xl text-sm leading-7 text-ink/62">{profile.bio || 'No bio added yet.'}</p>
 
             <div className="mt-6 flex flex-wrap gap-2">

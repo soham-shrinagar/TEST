@@ -88,7 +88,7 @@ const SessionsPage = () => {
                 <p className="font-extrabold text-ink">
                   {session.userAgent || 'Unknown device'}
                   {session.current ? (
-                    <span className="ml-2 rounded-full bg-[#4140c8]/10 px-2 py-0.5 text-xs font-bold text-[#4140c8]">
+                    <span className="ml-2 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-bold text-accent">
                       Current
                     </span>
                   ) : null}
@@ -112,7 +112,7 @@ const SessionsPage = () => {
         </div>
 
         <p className="mt-6 text-sm text-ink/50">
-          <Link to="/profile" className="font-bold text-[#4140c8] hover:text-ink">
+          <Link to="/profile" className="font-bold text-accent hover:text-ink">
             Back to profile
           </Link>
         </p>

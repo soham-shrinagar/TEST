@@ -1,0 +1,81 @@
+:root {
+  --paper: #edeae2;
+  --ink: #141414;
+  --ink-soft: #4a4640;
+  --accent: #ff3b1f;
+}
+
+.torn-top {
+  clip-path: polygon(0% 4%, 3% 0%, 97% 1%, 100% 5%, 100% 100%, 0% 100%);
+}
+
+.poster-outline-text {
+  -webkit-text-stroke: 8px var(--paper);
+  paint-order: stroke fill;
+}
+
+.halftone-bg {
+  background-image: radial-gradient(var(--ink) 1px, transparent 1.6px);
+  background-size: 7px 7px;
+  opacity: 0.08;
+}
+
+.btn-stamp {
+  clip-path: polygon(3% 8%, 97% 0%, 100% 92%, 4% 100%);
+}
+
+.btn-stamp-ink {
+  clip-path: polygon(2% 6%, 98% 0%, 100% 94%, 3% 100%);
+}
+
+.print-offset {
+  box-shadow: 4px 4px 0 0 var(--accent);
+}
+
+.font-display {
+  font-family: 'Anton', sans-serif;
+}
+
+.font-mono-data {
+  font-family: 'Space Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.modal-punch-in {
+  animation: punchIn 180ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes punchIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.scroll-cue-bob {
+  animation: bob 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-bob {
+    animation: none;
+  }
+
+  .modal-punch-in {
+    animation: none;
+  }
+}

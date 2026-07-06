@@ -35,7 +35,7 @@ const LoginPage = () => {
       <div className="grid w-full gap-10 lg:grid-cols-[0.9fr_1fr] lg:items-center">
         <section className="hidden max-w-lg lg:block">
           <div className="eyebrow">Welcome back</div>
-          <h1 className="mt-4 text-5xl font-extrabold leading-none text-ink">
+          <h1 className="mt-4 font-display text-5xl uppercase leading-none text-ink">
             Pick up where your partnerships left off.
           </h1>
           <p className="page-lead">
@@ -120,7 +120,7 @@ const LoginPage = () => {
 
           <p className="mt-5 text-center text-sm text-ink/50">
             Don&apos;t have an account?{' '}
-            <Link to="/register" className="font-bold text-[#4140c8] hover:text-ink">
+            <Link to="/register" className="font-bold text-accent hover:text-ink">
               Create one
             </Link>
           </p>

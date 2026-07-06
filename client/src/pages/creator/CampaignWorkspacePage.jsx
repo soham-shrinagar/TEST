@@ -84,7 +84,7 @@ const CampaignWorkspacePage = () => {
             {[...(campaign.requiredHashtags || []), ...(campaign.requiredMentions || [])].map((tag) => <button key={tag} type="button" onClick={() => navigator.clipboard?.writeText(tag)} className="rounded-full bg-ink/[0.06] px-3 py-1 text-xs font-bold">{tag}</button>)}
           </div>
           <div className="mt-5 grid gap-5 sm:grid-cols-2">
-            <div><p className="label">Do's</p>{(campaign.dos || []).map((item) => <p key={item} className="mt-2 text-sm font-bold text-[#0f7655]">{item}</p>)}</div>
+            <div><p className="label">Do's</p>{(campaign.dos || []).map((item) => <p key={item} className="mt-2 text-sm font-bold text-ink">{item}</p>)}</div>
             <div><p className="label">Don'ts</p>{(campaign.donts || []).map((item) => <p key={item} className="mt-2 text-sm font-bold text-[#a8322b]">{item}</p>)}</div>
           </div>
         </section>

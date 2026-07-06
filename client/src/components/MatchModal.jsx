@@ -11,18 +11,18 @@ const MatchModal = ({ matchedProfile, onClose }) => {
       ? `${BASE_URL}${matchedProfile.avatar}`
     : matchedProfile?.avatar
       ? `${BASE_URL}/uploads/${matchedProfile.avatar}`
-    : `https://ui-avatars.com/api/?name=${encodeURIComponent(matchedProfile?.displayName || '?')}&background=d67a51&color=fff&size=200`;
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(matchedProfile?.displayName || '?')}&background=141414&color=edeae2&size=200`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/35 px-4 backdrop-blur-md">
-      <div className="panel w-full max-w-sm animate-pop-in overflow-hidden p-0 text-center">
-        <div className="mesh-dark px-7 py-8 text-white">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-white/20 bg-white/10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 px-4">
+      <div className="modal-panel w-full max-w-sm overflow-hidden p-0 text-center">
+        <div className="border-b-2 border-ink bg-ink px-7 py-8 text-paper">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center overflow-hidden border-2 border-paper bg-paper/10">
             <img src={avatarSrc} alt={matchedProfile?.displayName} className="h-full w-full object-cover" />
           </div>
-          <h2 className="mt-5 text-3xl font-extrabold tracking-[-0.03em]">It&apos;s a match</h2>
-          <p className="mx-auto mt-3 max-w-xs text-sm leading-6 text-white/68">
-            You and <span className="font-bold text-white">{matchedProfile?.displayName}</span> liked each other.
+          <h2 className="mt-5 font-display text-3xl uppercase">It&apos;s a match</h2>
+          <p className="mx-auto mt-3 max-w-xs text-sm leading-6 text-paper/80">
+            You and <span className="font-bold text-paper">{matchedProfile?.displayName}</span> liked each other.
           </p>
         </div>
 

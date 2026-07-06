@@ -115,20 +115,20 @@ const StoreVisitWorkspacePage = () => {
         {sp.coverImage ? (
           <img src={sp.coverImage} alt={sp.storeName} className="h-48 w-full object-cover" />
         ) : (
-          <div className="h-48 bg-gradient-to-br from-[#4140c8] to-[#8b5cf6]" />
+          <div className="h-48 bg-ink" />
         )}
         <div className="flex gap-4 p-5">
           {sp.logoImage ? (
             <img src={sp.logoImage} alt="" className="h-16 w-16 rounded-full border-4 border-white object-cover -mt-8" />
           ) : (
-            <div className="flex h-16 w-16 -mt-8 shrink-0 items-center justify-center rounded-full border-4 border-white bg-[#4140c8] text-xl font-extrabold text-white">
+            <div className="flex h-16 w-16 -mt-8 shrink-0 items-center justify-center rounded-full border-4 border-white bg-accent text-xl font-extrabold text-white">
               {(sp.storeName || 'S').slice(0, 1)}
             </div>
           )}
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-extrabold text-ink">{sp.storeName || store?.name}</h1>
-              {sp.storeVerified && <span className="rounded-full bg-[#e9ebff] px-2 py-0.5 text-xs font-bold text-[#4140c8]">Verified</span>}
+              {sp.storeVerified && <span className="rounded-full bg-paper border border-accent px-2 py-0.5 text-xs font-bold text-accent">Verified</span>}
               <Badge status={application.status} />
             </div>
             <p className="text-sm text-ink/45">{sp.address?.city ? `📍 ${sp.address.city}` : ''}</p>
@@ -144,7 +144,7 @@ const StoreVisitWorkspacePage = () => {
             <p className="mt-2 font-bold text-ink">{deal.title}</p>
             <p className="mt-2 text-sm leading-6 text-ink/60">{deal.description}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="rounded-full bg-[#e9ebff] px-3 py-1 text-xs font-bold text-[#4140c8]">{OFFER_TYPE_LABELS[deal.offerType] || deal.offerType}</span>
+              <span className="rounded-full bg-paper border border-accent px-3 py-1 text-xs font-bold text-accent">{OFFER_TYPE_LABELS[deal.offerType] || deal.offerType}</span>
               {deliverableSummary.map((d) => <span key={d} className="rounded-full bg-ink/[0.06] px-3 py-1 text-xs font-bold">{d}</span>)}
             </div>
           </section>
@@ -165,12 +165,12 @@ const StoreVisitWorkspacePage = () => {
                   <p className="label">Location</p>
                   <p className="font-extrabold">{[sp.address.street, sp.address.city].filter(Boolean).join(', ')}</p>
                   {sp.address.googleMapsLink && (
-                    <a href={sp.address.googleMapsLink} target="_blank" rel="noreferrer" className="mt-1 block text-xs font-bold text-[#4140c8]">Open in Maps →</a>
+                    <a href={sp.address.googleMapsLink} target="_blank" rel="noreferrer" className="mt-1 block text-xs font-bold text-accent">Open in Maps →</a>
                   )}
                 </div>
               )}
               {application.visitConfirmed && (
-                <div className="rounded-full self-center bg-[#d9f7ec] px-4 py-2 text-sm font-extrabold text-[#0f7655]">✓ Visit confirmed by store</div>
+                <div className="rounded-full self-center bg-accent px-4 py-2 text-sm font-extrabold text-ink">✓ Visit confirmed by store</div>
               )}
             </div>
           </section>
@@ -181,7 +181,7 @@ const StoreVisitWorkspacePage = () => {
               <h2 className="text-xl font-extrabold">Submit Content</h2>
               <p className="mt-2 text-sm text-ink/60">Submit each piece of content separately.</p>
               {submitError && <div className="mt-3 rounded-lg border border-[#d64f4f]/25 bg-[#fff0ef] px-3 py-2 text-xs font-bold text-[#a8322b]">{submitError}</div>}
-              {submitSuccess && <div className="mt-3 rounded-lg border border-[#00a889]/25 bg-[#effbf8] px-3 py-2 text-xs font-bold text-[#007a65]">{submitSuccess}</div>}
+              {submitSuccess && <div className="mt-3 rounded-lg border-2 border-ink bg-paper px-3 py-2 text-xs font-bold text-ink">{submitSuccess}</div>}
               <form onSubmit={submitContent} className="mt-5 space-y-4">
                 <div>
                   <label className="label">Content type</label>
@@ -216,7 +216,7 @@ const StoreVisitWorkspacePage = () => {
                   <div key={i} className="flex items-center justify-between gap-3 rounded-lg bg-[#f4f4f4] px-4 py-3">
                     <div>
                       <p className="text-sm font-extrabold capitalize">{sub.type?.replace('_', ' ')}</p>
-                      {sub.postUrl && <a href={sub.postUrl} className="text-xs text-[#4140c8] truncate block" target="_blank" rel="noreferrer">{sub.postUrl}</a>}
+                      {sub.postUrl && <a href={sub.postUrl} className="text-xs text-accent truncate block" target="_blank" rel="noreferrer">{sub.postUrl}</a>}
                     </div>
                     <Badge status={sub.approvalStatus} />
                   </div>
@@ -281,7 +281,7 @@ const StoreVisitWorkspacePage = () => {
           <div className="panel p-5">
             <h2 className="text-xl font-extrabold">Store Contact</h2>
             {sp.contactPhone && <p className="mt-2 text-sm text-ink/60">{sp.contactPhone}</p>}
-            {sp.instagramHandle && <p className="mt-1 text-sm text-[#4140c8] font-bold">{sp.instagramHandle}</p>}
+            {sp.instagramHandle && <p className="mt-1 text-sm text-accent font-bold">{sp.instagramHandle}</p>}
             <Link to={`/store/${store?._id}`} className="btn-secondary mt-4 w-full text-center block">View Store Profile</Link>
           </div>
         </div>

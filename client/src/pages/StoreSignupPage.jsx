@@ -143,7 +143,7 @@ const StoreSignupPage = () => {
 
           <p className="mt-5 text-center text-sm text-ink/50">
             Already have an account?{' '}
-            <Link to="/login" className="font-bold text-[#4140c8] hover:text-ink">Sign in</Link>
+            <Link to="/login" className="font-bold text-accent hover:text-ink">Sign in</Link>
           </p>
           <p className="mt-3 text-center text-sm text-ink/50">
             Not a store?{' '}

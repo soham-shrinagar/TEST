@@ -128,7 +128,7 @@ const EditProfilePage = () => {
             </div>
           ) : null}
           {success ? (
-            <div className="rounded-lg border border-[#00a889]/25 bg-[#effbf8] px-4 py-3 text-sm font-bold text-[#007a65]">
+            <div className="rounded-lg border-2 border-ink bg-paper px-4 py-3 text-sm font-bold text-ink">
               {success}
             </div>
           ) : null}

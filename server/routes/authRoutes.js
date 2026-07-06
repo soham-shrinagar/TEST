@@ -13,7 +13,7 @@ const { revokeSession } = require('../services/sessionService');
 
 const router = express.Router();
 
-const clientUrl = () => process.env.CLIENT_URL || 'http://127.0.0.1:5173';
+const clientUrl = () => process.env.CLIENT_URL || 'http://localhost:5174';
 
 const clientPath = (path) => `${clientUrl()}${path}`;
 

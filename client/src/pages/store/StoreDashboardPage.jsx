@@ -18,11 +18,11 @@ const STORE_TYPE_LABELS = {
 
 const StatusPill = ({ status }) => {
   const color = status === 'active'
-    ? 'bg-[#d9f7ec] text-[#0f7655]'
+    ? 'bg-accent text-ink'
     : status === 'paused'
       ? 'bg-[#fff1cc] text-[#8a5a00]'
       : status === 'completed'
-        ? 'bg-[#e9ebff] text-[#4140c8]'
+        ? 'bg-paper border border-accent text-accent'
         : 'bg-ink/[0.06] text-ink/55';
   return (
     <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-extrabold capitalize ${color}`}>
@@ -104,7 +104,7 @@ const StoreDashboardPage = () => {
         {loading ? (
           <div className="panel mt-4 h-40 animate-pulse" />
         ) : activeDeal ? (
-          <Link to={`/store/deals/${activeDeal._id}`} className="panel mt-4 flex items-start justify-between gap-5 p-5 transition hover:shadow-md">
+          <Link to={`/store/deals/${activeDeal._id}`} className="panel mt-4 flex items-start justify-between gap-5 p-5 transition ">
             <div>
               <div className="flex items-center gap-3">
                 <h3 className="text-xl font-extrabold text-ink">{activeDeal.title}</h3>

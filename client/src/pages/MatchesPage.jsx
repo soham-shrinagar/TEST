@@ -84,7 +84,7 @@ const MatchesPage = () => {
           return (
             <div
               key={matchId}
-              className="panel relative flex w-full items-center gap-4 px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-ink/18 hover:shadow-lift sm:px-5"
+              className="panel relative flex w-full items-center gap-4 px-4 py-4 text-left transition hover:border-ink/18  sm:px-5"
             >
               <img src={avatarSrc} alt={profile.displayName} className="h-16 w-16 shrink-0 rounded-lg object-cover" />
 

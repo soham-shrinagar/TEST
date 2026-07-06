@@ -44,7 +44,7 @@ const DealDetailPage = () => {
 
   return (
     <div className="page-shell">
-      <div className="sticky top-[74px] z-20 -mx-4 border-b border-ink/10 bg-white/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <div className="sticky top-[74px] z-20 -mx-4 border-b-2 border-ink bg-paper px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-ink font-extrabold text-white">{(brandProfile?.displayName || campaign.brand?.name || 'B').slice(0, 1)}</div>
@@ -67,7 +67,7 @@ const DealDetailPage = () => {
           </div>
           <div className="mt-5 border-t border-ink/10 pt-5">
             <p className="label">Total potential</p>
-            <p className="text-3xl font-extrabold text-[#0f7655]">{money(totalPerCreator(campaign))}</p>
+            <p className="text-3xl font-extrabold text-ink">{money(totalPerCreator(campaign))}</p>
           </div>
         </aside>
 
@@ -88,16 +88,16 @@ const DealDetailPage = () => {
             <p className="mt-3 text-sm leading-6 text-ink/62">{campaign.description}</p>
             <p className="mt-3 text-sm leading-6 text-ink/62">{campaign.brief}</p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div><p className="label">Do's</p>{(campaign.dos || []).map((item) => <p key={item} className="mt-2 text-sm font-bold text-[#0f7655]">{item}</p>)}</div>
+              <div><p className="label">Do's</p>{(campaign.dos || []).map((item) => <p key={item} className="mt-2 text-sm font-bold text-ink">{item}</p>)}</div>
               <div><p className="label">Don'ts</p>{(campaign.donts || []).map((item) => <p key={item} className="mt-2 text-sm font-bold text-[#a8322b]">{item}</p>)}</div>
             </div>
-            {(campaign.referenceLinks || []).map((link) => <a key={link} className="mt-3 block text-sm font-bold text-[#4140c8]" href={link} target="_blank" rel="noreferrer">{link}</a>)}
+            {(campaign.referenceLinks || []).map((link) => <a key={link} className="mt-3 block text-sm font-bold text-accent" href={link} target="_blank" rel="noreferrer">{link}</a>)}
           </section>
 
           <section className="panel p-5">
             <h2 className="text-xl font-extrabold">About the brand</h2>
             <p className="mt-3 text-sm leading-6 text-ink/60">{brandProfile?.bio || brandProfile?.brandCategory || 'Brand profile details will appear here.'}</p>
-            {brandProfile?.website ? <a href={brandProfile.website} target="_blank" rel="noreferrer" className="mt-3 inline-flex font-bold text-[#4140c8]">{brandProfile.website}</a> : null}
+            {brandProfile?.website ? <a href={brandProfile.website} target="_blank" rel="noreferrer" className="mt-3 inline-flex font-bold text-accent">{brandProfile.website}</a> : null}
           </section>
 
           {!application ? (

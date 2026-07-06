@@ -78,7 +78,7 @@ const StoreVisitRow = ({ application }) => {
   const store = deal.store;
   return (
     <article className="flex items-center gap-4 rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#4140c8] text-sm font-extrabold text-white">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-extrabold text-white">
         {(store?.storeProfile?.storeName || deal.title || 'S').slice(0, 1)}
       </div>
       <div className="min-w-0 flex-1">
@@ -94,7 +94,7 @@ const StoreVisitRow = ({ application }) => {
       <div className="flex shrink-0 flex-col items-end gap-2">
         <Badge status={application.status} />
         {deal.flatFeeAmount > 0 && (
-          <p className="text-xs font-bold text-[#0f7655]">{money(deal.flatFeeAmount)}</p>
+          <p className="text-xs font-bold text-ink">{money(deal.flatFeeAmount)}</p>
         )}
         {(application.status === 'accepted' || application.status === 'visited') && (
           <Link
@@ -167,13 +167,13 @@ const InfluencerDashboardPage = () => {
               label="Posts live"
               value={stats.postsLive}
               sub="Approved & published"
-              accent="text-[#4140c8]"
+              accent="text-accent"
             />
             <StatCard
               label="Total earnings"
               value={stats.totalEarnings > 0 ? money(stats.totalEarnings) : '—'}
               sub="From paid campaigns"
-              accent="text-[#0f7655]"
+              accent="text-ink"
             />
           </div>
 
@@ -259,7 +259,7 @@ const InfluencerDashboardPage = () => {
           <div className="mt-10 grid gap-4 sm:grid-cols-2 border-t border-ink/10 pt-8">
             <Link
               to="/creator/deals"
-              className="panel p-5 flex items-center gap-4 hover:border-[#4140c8]/30 transition"
+              className="panel p-5 flex items-center gap-4 hover:border-accent/30 transition"
             >
               <span className="text-3xl">🔍</span>
               <div>
@@ -269,7 +269,7 @@ const InfluencerDashboardPage = () => {
             </Link>
             <Link
               to="/profile"
-              className="panel p-5 flex items-center gap-4 hover:border-[#4140c8]/30 transition"
+              className="panel p-5 flex items-center gap-4 hover:border-accent/30 transition"
             >
               <span className="text-3xl">✏️</span>
               <div>

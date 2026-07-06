@@ -265,8 +265,10 @@ const CampaignDashboardPage = () => {
             <div className="mt-4 space-y-3">
               {analytics.engagementByCreator.map((item) => (
                 <div key={item.name}>
-                  <div className="flex justify-between text-sm font-bold"><span>{item.name}</span><span>{item.engagement}</span></div>
-                  <div className="mt-1 h-3 rounded-full bg-ink/[0.06]"><div className="h-3 rounded-full bg-[#00a889]" style={{ width: `${Math.max((item.engagement / analytics.maxEngagement) * 100, 4)}%` }} /></div>
+                  <div className="flex justify-between border-b border-ink/20 py-2 text-sm font-bold">
+                    <span>{item.name}</span>
+                    <span className="font-mono-data tabular-nums">{item.engagement}</span>
+                  </div>
                 </div>
               ))}
             </div>

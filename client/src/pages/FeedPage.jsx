@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import RecommendedCampaignCard from '../components/RecommendedCampaignCard';
 import RecommendedCreatorCard from '../components/RecommendedCreatorCard';
+import FitToken from '../components/lineup/FitToken';
 import { useAuth } from '../context/AuthContext';
 import useRecommendations from '../hooks/useRecommendations';
 import { daysUntil, money } from '../components/campaignUtils';
@@ -74,23 +75,23 @@ const StoreDealCard = ({ item }) => {
             className="h-14 w-14 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#4140c8] text-xl font-extrabold text-white">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-xl font-extrabold text-white">
             {(deal.storeInfo?.storeName || deal.title || 'S').slice(0, 1)}
           </div>
         )}
         <div className="min-w-0">
           <p className="font-extrabold text-ink">
             {deal.storeInfo?.storeName || 'Store'}
-            {deal.storeInfo?.storeVerified && <span className="ml-1.5 text-[#4140c8]">✓</span>}
+            {deal.storeInfo?.storeVerified && <span className="ml-1.5 text-accent">✓</span>}
           </p>
           <p className="text-sm font-bold text-ink/45">
             {deal.storeInfo?.city || deal.requirements?.location || 'Local'}
           </p>
         </div>
         {score !== null && score !== undefined && (
-          <span className="ml-auto shrink-0 rounded-full bg-[#e9ebff] px-2.5 py-1 text-xs font-extrabold text-[#4140c8]">
-            {score}% match
-          </span>
+          <div className="ml-auto shrink-0">
+            <FitToken score={score} label="Fit" />
+          </div>
         )}
       </div>
 
@@ -98,11 +99,11 @@ const StoreDealCard = ({ item }) => {
       <p className="mt-2 text-sm leading-6 text-ink/60 line-clamp-2">{deal.description}</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        <span className="rounded-full bg-[#e9ebff] px-3 py-1 text-xs font-bold text-[#4140c8]">
+        <span className="rounded-full bg-paper border border-accent px-3 py-1 text-xs font-bold text-accent">
           {OFFER_TYPE_LABELS[deal.offerType] || deal.offerType}
         </span>
         {deal.flatFeeAmount > 0 && (
-          <span className="rounded-full bg-[#d9f7ec] px-3 py-1 text-xs font-bold text-[#0f7655]">
+          <span className="rounded-full bg-accent px-3 py-1 text-xs font-bold text-ink">
             {money(deal.flatFeeAmount)} cash
           </span>
         )}
@@ -191,9 +192,9 @@ const CampaignFeedCard = ({ item }) => {
           </p>
         </div>
         {score !== null && score !== undefined && (
-          <span className="ml-auto shrink-0 rounded-full bg-[#d9f7ec] px-2.5 py-1 text-xs font-extrabold text-[#0f7655]">
-            {score}% match
-          </span>
+          <div className="ml-auto shrink-0">
+            <FitToken score={score} label="Fit" />
+          </div>
         )}
       </div>
 
@@ -212,7 +213,7 @@ const CampaignFeedCard = ({ item }) => {
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="label">Pay per creator</p>
-          <p className="text-2xl font-extrabold text-[#0f7655]">{money(campaign.budgetPerCreator)}</p>
+          <p className="text-2xl font-extrabold text-ink">{money(campaign.budgetPerCreator)}</p>
         </div>
         <span
           className={`rounded-full px-3 py-1 text-xs font-extrabold ${

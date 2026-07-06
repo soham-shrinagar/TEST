@@ -4,6 +4,8 @@ import api from '../api/axios';
 const AuthContext = createContext(null);
 const STORAGE_KEY = 'csUser';
 const LEGACY_STORAGE_KEY = 'imUser';
+const SESSION_RETRIES = 4;
+const SESSION_RETRY_DELAY_MS = 1500;
 
 const parseJwt = (token) => {
   try {
@@ -43,6 +45,8 @@ const readStoredUser = () => {
   }
 };
 
+const wait = (ms) => new Promise((resolve) => { window.setTimeout(resolve, ms); });
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(readStoredUser);
   const [loading, setLoading] = useState(!readStoredUser());
@@ -56,19 +60,27 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      try {
-        const { data } = await api.get('/auth/session');
-        if (mounted) {
-          setUser(data);
+      for (let attempt = 0; attempt < SESSION_RETRIES; attempt += 1) {
+        try {
+          const { data } = await api.get('/auth/session');
+          if (mounted) {
+            setUser(data);
+          }
+          break;
+        } catch (error) {
+          const retryable = !error.response || error.response.status >= 500 || error.code === 'ERR_NETWORK';
+          if (!retryable || attempt === SESSION_RETRIES - 1) {
+            if (mounted) {
+              setUser(null);
+            }
+            break;
+          }
+          await wait(SESSION_RETRY_DELAY_MS);
         }
-      } catch {
-        if (mounted) {
-          setUser(null);
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+      }
+
+      if (mounted) {
+        setLoading(false);
       }
     };
 

@@ -21,13 +21,13 @@ const STORE_TYPE_OPTIONS = [
 ];
 
 const StoreCard = ({ store }) => (
-  <Link to={`/store/${store._id}`} className="panel group flex flex-col overflow-hidden transition hover:shadow-md">
-    <div className="relative h-36 bg-gradient-to-br from-[#4140c8] to-[#8b5cf6]">
+  <Link to={`/store/${store._id}`} className="panel group flex flex-col overflow-hidden transition">
+    <div className="relative h-36 bg-ink">
       {store.coverImage && (
         <img src={store.coverImage} alt="" className="h-full w-full object-cover" />
       )}
       {store.hasActiveDeal && (
-        <span className="absolute right-3 top-3 rounded-full bg-[#d9f7ec] px-2.5 py-1 text-xs font-extrabold text-[#0f7655]">
+        <span className="absolute right-3 top-3 bg-accent px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-paper">
           Deal Open
         </span>
       )}
@@ -36,14 +36,14 @@ const StoreCard = ({ store }) => (
       {store.logoImage ? (
         <img src={store.logoImage} alt="" className="h-12 w-12 shrink-0 -mt-8 rounded-full border-2 border-white object-cover" />
       ) : (
-        <div className="flex h-12 w-12 shrink-0 -mt-8 items-center justify-center rounded-full border-2 border-white bg-[#4140c8] text-lg font-extrabold text-white">
+        <div className="flex h-12 w-12 shrink-0 -mt-8 items-center justify-center border-2 border-paper bg-ink font-display text-lg uppercase text-paper">
           {(store.storeName || 'S').slice(0, 1)}
         </div>
       )}
       <div className="min-w-0 flex-1">
         <p className="font-extrabold text-ink truncate">
           {store.storeName}
-          {store.storeVerified && <span className="ml-1.5 text-[#4140c8]">✓</span>}
+          {store.storeVerified && <span className="ml-1.5 text-accent">✓</span>}
         </p>
         <p className="text-xs text-ink/50">
           {STORE_TYPE_LABELS[store.storeType] || store.storeType || 'Store'}

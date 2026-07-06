@@ -1,4 +1,5 @@
 import React from 'react';
+import { lineupStatusLabel } from '../constants/lineupCopy';
 
 export const niches = [
   'Lifestyle',
@@ -51,25 +52,25 @@ export const emptyCampaign = {
 };
 
 export const statusClass = (status) => ({
-  active: 'bg-[#d9f7ec] text-[#0f7655]',
-  draft: 'bg-ink/[0.06] text-ink/55',
-  paused: 'bg-[#fff1cc] text-[#8a5a00]',
-  completed: 'bg-[#e9ebff] text-[#4140c8]',
-  cancelled: 'bg-[#ffe1df] text-[#a8322b]',
-  pending: 'bg-[#fff1cc] text-[#8a5a00]',
-  accepted: 'bg-[#d9f7ec] text-[#0f7655]',
-  rejected: 'bg-[#ffe1df] text-[#a8322b]',
-  live: 'bg-[#d9f7ec] text-[#0f7655]',
-  approved: 'bg-[#e9ebff] text-[#4140c8]',
-  paid: 'bg-[#d9f7ec] text-[#0f7655]',
-  partial: 'bg-[#e4f1ff] text-[#1f5f99]',
-  visited: 'bg-[#f0f4ff] text-[#4140c8]',
-})[status] || 'bg-ink/[0.06] text-ink/55';
+  active: 'bg-accent text-paper',
+  draft: 'bg-paper text-inkSoft border border-ink',
+  paused: 'bg-paper text-ink border border-ink',
+  completed: 'bg-ink text-paper',
+  cancelled: 'bg-ink text-paper',
+  pending: 'bg-paper text-ink border border-accent',
+  accepted: 'bg-accent text-paper',
+  rejected: 'bg-ink text-paper',
+  live: 'bg-accent text-paper',
+  approved: 'bg-accent text-paper',
+  paid: 'bg-ink text-paper',
+  partial: 'bg-paper text-ink border border-ink',
+  visited: 'bg-paper text-ink border border-ink',
+})[status] || 'bg-paper text-inkSoft border border-ink';
 
 export const Badge = ({ children, status }) => React.createElement(
   'span',
-  { className: `inline-flex rounded-full px-2.5 py-1 text-xs font-extrabold capitalize ${statusClass(status)}` },
-  children || status,
+  { className: `inline-flex px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.1em] ${statusClass(status)}` },
+  children || lineupStatusLabel(status) || status,
 );
 
 export const money = (value) => `INR ${Number(value || 0).toLocaleString('en-IN')}`;

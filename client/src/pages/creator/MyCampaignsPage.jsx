@@ -25,7 +25,7 @@ const StoreVisitCard = ({ application }) => {
 
   return (
     <article className="panel flex flex-col gap-4 p-5 sm:flex-row sm:items-start">
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#4140c8] text-xl font-extrabold text-white">
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-xl font-extrabold text-white">
         {(store?.storeProfile?.storeName || 'S').slice(0, 1)}
       </div>
       <div className="flex-1 min-w-0">

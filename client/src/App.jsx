@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import LandingPage from './pages/LandingPage';
@@ -46,16 +46,6 @@ const hasRole = (user, roles) => user && roles.includes(user.role);
 
 const App = () => {
   const { user, loading } = useAuth();
-
-  useEffect(() => {
-    const handlePointerMove = (event) => {
-      document.documentElement.style.setProperty('--page-cursor-x', `${event.clientX}px`);
-      document.documentElement.style.setProperty('--page-cursor-y', `${event.clientY}px`);
-    };
-
-    window.addEventListener('pointermove', handlePointerMove);
-    return () => window.removeEventListener('pointermove', handlePointerMove);
-  }, []);
 
   return (
     <>

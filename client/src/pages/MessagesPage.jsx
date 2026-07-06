@@ -11,7 +11,7 @@ const ConversationRow = ({ conversation, onOpen }) => {
     : conversation.profile?.campaignInterests;
 
   return (
-    <button onClick={() => onOpen(conversation)} className="panel flex w-full items-center gap-4 px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-lift">
+    <button onClick={() => onOpen(conversation)} className="panel flex w-full items-center gap-4 px-4 py-4 text-left transition ">
       <img
         src={avatarUrl(conversation.profile || conversation.otherUser, conversation.otherUser?.name)}
         alt={conversation.profile?.displayName || conversation.otherUser?.name}

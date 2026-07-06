@@ -110,7 +110,7 @@ const StoreProfileEditPage = () => {
 
         <form onSubmit={handleSubmit} className="panel mt-8 space-y-6 p-5 sm:p-7">
           {error ? <div className="rounded-lg border border-[#ff7a1a]/25 bg-[#fff5ec] px-4 py-3 text-sm font-bold text-[#b64c00]">{error}</div> : null}
-          {success ? <div className="rounded-lg border border-[#00a889]/25 bg-[#effbf8] px-4 py-3 text-sm font-bold text-[#007a65]">{success}</div> : null}
+          {success ? <div className="rounded-lg border-2 border-ink bg-paper px-4 py-3 text-sm font-bold text-ink">{success}</div> : null}
 
           <SectionBlock title="Store basics">
             <div className="grid gap-4 md:grid-cols-2">

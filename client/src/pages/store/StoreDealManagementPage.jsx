@@ -65,9 +65,9 @@ const StoreDealManagementPage = () => {
 
   const { deal, applications } = data;
 
-  const statusColor = deal.status === 'active' ? 'bg-[#d9f7ec] text-[#0f7655]'
+  const statusColor = deal.status === 'active' ? 'bg-accent text-ink'
     : deal.status === 'paused' ? 'bg-[#fff1cc] text-[#8a5a00]'
-      : deal.status === 'completed' ? 'bg-[#e9ebff] text-[#4140c8]'
+      : deal.status === 'completed' ? 'bg-paper border border-accent text-accent'
         : 'bg-ink/[0.06] text-ink/55';
 
   return (
@@ -154,7 +154,7 @@ const StoreDealManagementPage = () => {
                       {app.status === 'accepted' && !app.visitConfirmed && (
                         <button type="button" className="btn-secondary px-3 py-1.5 text-xs" onClick={() => confirmVisit(app._id)}>Confirm Visit</button>
                       )}
-                      {app.visitConfirmed && <span className="text-xs font-bold text-[#0f7655]">✓ Visited</span>}
+                      {app.visitConfirmed && <span className="text-xs font-bold text-ink">✓ Visited</span>}
                     </div>
                   </td>
                 </tr>
@@ -187,7 +187,7 @@ const StoreDealManagementPage = () => {
                       <Badge status={sub.approvalStatus} />
                     </div>
                     <p className="mt-1 text-xs capitalize text-ink/50">{sub.type?.replace('_', ' ')}</p>
-                    {sub.postUrl && <a href={sub.postUrl} target="_blank" rel="noreferrer" className="mt-2 block text-xs font-bold text-[#4140c8] truncate">{sub.postUrl}</a>}
+                    {sub.postUrl && <a href={sub.postUrl} target="_blank" rel="noreferrer" className="mt-2 block text-xs font-bold text-accent truncate">{sub.postUrl}</a>}
                     {sub.approvalStatus === 'pending' && (
                       <div className="mt-3 flex gap-2">
                         <button type="button" className="btn-secondary px-3 py-1.5 text-xs" onClick={() => approveSubmission(app._id, idx, 'approved')}>Approve</button>

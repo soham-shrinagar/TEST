@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+@import './styles/tokens.css';
 
 @tailwind base;
 @tailwind components;
@@ -14,13 +15,7 @@
   }
 
   body {
-    @apply bg-white font-sans text-ink antialiased;
-    background-image:
-      radial-gradient(circle 180px at var(--page-cursor-x, 50vw) var(--page-cursor-y, 50vh), rgba(95, 93, 255, 0.09), rgba(0, 168, 137, 0.045) 42%, transparent 68%),
-      radial-gradient(circle 112px at var(--page-cursor-x, 50vw) var(--page-cursor-y, 50vh), rgba(255, 255, 255, 0.92), transparent 72%),
-      linear-gradient(rgba(8, 7, 11, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(8, 7, 11, 0.035) 1px, transparent 1px);
-    background-size: auto, auto, 32px 32px, 32px 32px;
+    @apply bg-paper font-sans text-ink antialiased;
     min-height: 100vh;
   }
 
@@ -40,8 +35,8 @@
   }
 
   ::selection {
-    background: rgba(8, 7, 11, 0.9);
-    color: #ffffff;
+    background: #141414;
+    color: #edeae2;
   }
 
   ::-webkit-scrollbar {
@@ -50,12 +45,12 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: rgba(8, 7, 11, 0.04);
+    background: rgba(20, 20, 20, 0.04);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(8, 7, 11, 0.2);
-    border-radius: 999px;
+    background: rgba(20, 20, 20, 0.2);
+    border-radius: 0;
   }
 }
 
@@ -65,155 +60,118 @@
   }
 
   .panel {
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(8, 7, 11, 0.1);
-    border-radius: 0.5rem;
-    box-shadow: 0 18px 55px rgba(8, 7, 11, 0.08);
+    @apply torn-top relative border-2 border-ink bg-paper;
+    box-shadow: none;
   }
 
   .field {
-    @apply w-full rounded-lg border bg-white px-3.5 py-3 text-sm text-ink transition duration-200 focus:bg-white focus:outline-none;
-    border-color: rgba(8, 7, 11, 0.12);
+    @apply w-full border-2 border-ink bg-paper px-3.5 py-3 text-sm text-ink transition duration-200 focus:bg-paper focus:outline-none;
+    border-radius: 0;
   }
 
   .field::placeholder {
-    color: rgba(8, 7, 11, 0.36);
+    color: #4a4640;
   }
 
   .field:focus {
-    border-color: rgba(8, 7, 11, 0.86);
-    box-shadow: 0 0 0 4px rgba(8, 7, 11, 0.08);
+    border-color: #ff3b1f;
+    box-shadow: 0 0 0 2px rgba(255, 59, 31, 0.2);
   }
 
   .label {
-    @apply mb-1.5 block text-xs font-bold uppercase tracking-[0.12em];
-    color: rgba(8, 7, 11, 0.48);
+    @apply mb-1.5 block font-mono text-xs font-bold uppercase tracking-[0.12em] text-inkSoft;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-white shadow-soft transition duration-200;
+    @apply btn-stamp inline-flex items-center justify-center border-[1.5px] border-ink bg-ink px-5 py-2.5 text-sm font-bold text-paper transition-transform duration-150;
+    box-shadow: none;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-full border bg-white px-5 py-2.5 text-sm font-bold text-ink transition duration-200;
-    border-color: rgba(8, 7, 11, 0.12);
+    @apply btn-stamp inline-flex items-center justify-center border-[1.5px] border-ink bg-paper px-5 py-2.5 text-sm font-bold text-ink transition-transform duration-150;
+    box-shadow: none;
   }
 
   .btn-primary:hover,
   .btn-secondary:hover {
-    transform: translateY(-1px);
+    transform: none;
   }
 
-  .btn-primary:hover {
-    background: rgba(8, 7, 11, 0.88);
-  }
-
-  .btn-secondary:hover {
-    background: rgba(8, 7, 11, 0.04);
-    border-color: rgba(8, 7, 11, 0.2);
+  .btn-primary:active,
+  .btn-secondary:active {
+    transform: translateY(2px);
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full border bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.16em];
-    border-color: rgba(8, 7, 11, 0.12);
-    color: rgba(8, 7, 11, 0.56);
+    @apply inline-flex items-center gap-2 border border-ink bg-paper px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.16em] text-inkSoft;
   }
 
   .page-title {
-    @apply text-3xl font-extrabold leading-tight text-ink sm:text-4xl;
+    @apply font-display text-3xl uppercase leading-tight text-ink sm:text-4xl;
   }
 
   .page-lead {
-    @apply mt-3 max-w-2xl text-base leading-7;
-    color: rgba(8, 7, 11, 0.6);
+    @apply mt-3 max-w-2xl text-base leading-7 text-inkSoft;
   }
 
   .section-heading {
-    @apply text-3xl font-extrabold leading-tight text-ink sm:text-4xl;
+    @apply font-display text-3xl uppercase leading-tight text-ink sm:text-4xl;
   }
 
   .section-copy {
-    @apply text-base leading-7;
-    color: rgba(8, 7, 11, 0.6);
+    @apply text-base leading-7 text-inkSoft;
+  }
+
+  .marquee-nav {
+    @apply sticky top-0 z-50 border-b-2 border-ink bg-paper px-4 py-3 sm:px-6;
+  }
+
+  .tab-pill {
+    @apply border-[1.5px] border-ink px-4 py-2 text-sm font-bold transition-transform duration-150;
+  }
+
+  .tab-pill-active {
+    @apply bg-ink text-paper;
+  }
+
+  .tab-pill-inactive {
+    @apply bg-paper text-inkSoft;
+  }
+
+  .ledger-table {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .ledger-table th {
+    @apply border-b-2 border-ink px-3 py-2 text-left font-mono text-xs uppercase tracking-[0.1em] text-inkSoft;
+  }
+
+  .ledger-table td {
+    @apply border-b border-ink/20 px-3 py-2;
+  }
+
+  .ledger-table td.numeric {
+    @apply text-right font-mono tabular-nums;
+  }
+
+  .modal-panel {
+    @apply modal-punch-in torn-top border-2 border-ink bg-paper;
+  }
+
+  .toast-chit {
+    @apply border-l-4 border-accent bg-ink px-4 py-3 font-mono text-sm text-paper;
   }
 }
 
 @layer utilities {
-  .gradient-text {
-    background: linear-gradient(135deg, #08070b 0%, #5f5dff 46%, #00a889 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .font-mono-data {
+    font-family: 'Space Mono', monospace;
+    font-variant-numeric: tabular-nums;
   }
+}
 
-  .soft-ring {
-    box-shadow:
-      0 0 0 1px rgba(8, 7, 11, 0.08),
-      0 18px 48px rgba(8, 7, 11, 0.08);
-  }
-
-  .canvas-panel {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 250, 250, 0.92)),
-      linear-gradient(rgba(8, 7, 11, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(8, 7, 11, 0.035) 1px, transparent 1px);
-    background-size: auto, 24px 24px, 24px 24px;
-    border: 1px solid rgba(8, 7, 11, 0.1);
-    border-radius: 0.5rem;
-    box-shadow: 0 24px 80px rgba(8, 7, 11, 0.12);
-  }
-
-  .mesh-dark {
-    background:
-      radial-gradient(circle at 18% 12%, rgba(95, 93, 255, 0.35), transparent 28%),
-      radial-gradient(circle at 78% 0%, rgba(0, 168, 137, 0.32), transparent 30%),
-      linear-gradient(135deg, #08070b 0%, #191821 100%);
-  }
-
-  .landing-surface {
-    background:
-      radial-gradient(circle at 18% 8%, rgba(95, 93, 255, 0.12), transparent 26rem),
-      radial-gradient(circle at 86% 16%, rgba(0, 168, 137, 0.1), transparent 28rem),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.94));
-    background-size: 120% 120%, 120% 120%, auto;
-    animation: live-gradient 12s ease-in-out infinite alternate;
-  }
-
-  .scroll-reveal {
-    animation: reveal-up 700ms ease both;
-  }
-
-  @supports (animation-timeline: view()) {
-    .scroll-reveal {
-      animation: reveal-up linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 28%;
-    }
-  }
-
-  @keyframes reveal-up {
-    from {
-      opacity: 0;
-      transform: translateY(24px) scale(0.985);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  @keyframes live-gradient {
-    from {
-      background-position: 0% 0%, 100% 0%, 0 0;
-    }
-    to {
-      background-position: 18% 10%, 78% 18%, 0 0;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .scroll-reveal {
-      animation: none;
-    }
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }

@@ -383,7 +383,7 @@ const OnboardingPage = () => {
                       />
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-extrabold text-ink">{instagramPreview.full_name || instagramPreview.username}</p>
-                        <p className="text-sm font-bold text-[#4140c8]">@{instagramPreview.username}</p>
+                        <p className="text-sm font-bold text-accent">@{instagramPreview.username}</p>
                       </div>
                     </div>
                     <div className="mt-4 grid gap-2 sm:grid-cols-3">

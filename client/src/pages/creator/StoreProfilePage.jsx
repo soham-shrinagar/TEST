@@ -70,7 +70,7 @@ const StoreProfilePage = () => {
         {sp.coverImage ? (
           <img src={sp.coverImage} alt={sp.storeName} className="h-52 w-full object-cover" />
         ) : (
-          <div className="h-52 bg-gradient-to-br from-[#4140c8] to-[#8b5cf6]" />
+          <div className="h-52 bg-ink" />
         )}
         <div className="flex flex-wrap items-end gap-5 px-5 pb-5 -mt-10">
           {sp.logoImage ? (
@@ -80,7 +80,7 @@ const StoreProfilePage = () => {
               className="h-20 w-20 shrink-0 rounded-full border-4 border-white object-cover shadow"
             />
           ) : (
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-[#4140c8] text-2xl font-extrabold text-white shadow">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-white bg-accent text-2xl font-extrabold text-white shadow">
               {(sp.storeName || 'S').slice(0, 1)}
             </div>
           )}
@@ -88,7 +88,7 @@ const StoreProfilePage = () => {
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-extrabold text-ink">{sp.storeName || store?.name}</h1>
               {sp.storeVerified && (
-                <span className="rounded-full bg-[#e9ebff] px-2 py-0.5 text-xs font-bold text-[#4140c8]">
+                <span className="rounded-full bg-paper border border-accent px-2 py-0.5 text-xs font-bold text-accent">
                   ✓ Verified
                 </span>
               )}
@@ -122,18 +122,18 @@ const StoreProfilePage = () => {
             <section className="panel p-5">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-xl font-extrabold">Current Deal</h2>
-                <span className="rounded-full bg-[#d9f7ec] px-3 py-1 text-xs font-extrabold text-[#0f7655]">
+                <span className="rounded-full bg-accent px-3 py-1 text-xs font-extrabold text-ink">
                   Active
                 </span>
               </div>
               <p className="mt-3 font-bold text-ink">{activeDeal.title}</p>
               <p className="mt-1 text-sm leading-6 text-ink/60">{activeDeal.description}</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <span className="rounded-full bg-[#e9ebff] px-3 py-1 text-xs font-bold text-[#4140c8]">
+                <span className="rounded-full bg-paper border border-accent px-3 py-1 text-xs font-bold text-accent">
                   {OFFER_TYPE_LABELS[activeDeal.offerType] || activeDeal.offerType}
                 </span>
                 {activeDeal.flatFeeAmount > 0 && (
-                  <span className="rounded-full bg-[#d9f7ec] px-3 py-1 text-xs font-bold text-[#0f7655]">
+                  <span className="rounded-full bg-accent px-3 py-1 text-xs font-bold text-ink">
                     INR {activeDeal.flatFeeAmount?.toLocaleString('en-IN')} cash
                   </span>
                 )}
@@ -198,7 +198,7 @@ const StoreProfilePage = () => {
                       <p className="text-sm font-bold">{deal.title}</p>
                       <p className="text-xs text-ink/45">{deal.stats?.totalPostsLive || 0} posts live</p>
                     </div>
-                    <span className="rounded-full bg-[#e9ebff] px-2.5 py-1 text-xs font-bold text-[#4140c8]">
+                    <span className="rounded-full bg-paper border border-accent px-2.5 py-1 text-xs font-bold text-accent">
                       Completed
                     </span>
                   </div>
@@ -225,14 +225,14 @@ const StoreProfilePage = () => {
               {sp.instagramHandle && (
                 <div>
                   <dt className="label">Instagram</dt>
-                  <dd className="font-bold text-[#4140c8]">{sp.instagramHandle}</dd>
+                  <dd className="font-bold text-accent">{sp.instagramHandle}</dd>
                 </div>
               )}
               {sp.websiteUrl && (
                 <div>
                   <dt className="label">Website</dt>
                   <dd>
-                    <a href={sp.websiteUrl} target="_blank" rel="noreferrer" className="font-bold text-[#4140c8] truncate block">
+                    <a href={sp.websiteUrl} target="_blank" rel="noreferrer" className="font-bold text-accent truncate block">
                       {sp.websiteUrl.replace(/^https?:\/\//, '')}
                     </a>
                   </dd>
@@ -245,7 +245,7 @@ const StoreProfilePage = () => {
                     {[sp.address.street, sp.address.city, sp.address.state].filter(Boolean).join(', ')}
                   </dd>
                   {sp.address.googleMapsLink && (
-                    <a href={sp.address.googleMapsLink} target="_blank" rel="noreferrer" className="mt-1 block text-xs font-bold text-[#4140c8]">
+                    <a href={sp.address.googleMapsLink} target="_blank" rel="noreferrer" className="mt-1 block text-xs font-bold text-accent">
                       Open in Maps →
                     </a>
                   )}

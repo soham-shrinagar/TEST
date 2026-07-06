@@ -23,16 +23,39 @@ const { startWorkers } = require('./workers');
 const app = express();
 const server = http.createServer(app);
 const uploadsDir = path.join(__dirname, 'uploads');
+let dbReady = false;
 
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+const allowedOrigins = new Set(
+  [
+    process.env.CLIENT_URL,
+    process.env.CLIENT_URL?.replace('localhost', '127.0.0.1'),
+    process.env.CLIENT_URL?.replace('127.0.0.1', 'localhost'),
+  ].filter(Boolean),
+);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.has(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 app.use(express.json());
+
+app.get('/', (req, res) => res.send('CreatorSync API is running'));
+app.get('/health', (req, res) => {
+  if (dbReady) {
+    return res.json({ ok: true });
+  }
+  return res.status(503).json({ ok: false, status: 'starting' });
+});
 
 const registerSessionAndRoutes = () => {
   app.use(session({
@@ -67,8 +90,6 @@ const registerSessionAndRoutes = () => {
   app.use('/api/store', require('./routes/storeRoutes'));
 };
 
-app.get('/', (req, res) => res.send('CreatorSync API is running'));
-
 app.use((err, req, res, next) => {
   if (err) {
     return res.status(400).json({ message: err.message || 'Request failed' });
@@ -76,11 +97,7 @@ app.use((err, req, res, next) => {
   return next();
 });
 
-const startServer = async () => {
-  await configureMongoDns(process.env.MONGO_URI);
-  registerSessionAndRoutes();
-  await connectDB();
-  startWorkers();
+const scheduleCronJobs = () => {
   cron.schedule('0 3 * * *', async () => {
     try {
       const users = await User.find({ instagram_verified: true, instagram_access_token: { $exists: true, $ne: '' } });
@@ -124,9 +141,32 @@ const startServer = async () => {
     }
     console.log('Recommendations generated.');
   });
-  initMessengerSocket(server);
+};
+
+const startServer = async () => {
+  await configureMongoDns(process.env.MONGO_URI);
+  registerSessionAndRoutes();
+
   const PORT = process.env.PORT || 5000;
-  server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  await new Promise((resolve) => {
+    server.listen(PORT, () => {
+      console.log(`Server listening on port ${PORT}`);
+      resolve();
+    });
+  });
+
+  await connectDB();
+  dbReady = true;
+  console.log('API ready');
+
+  try {
+    startWorkers();
+  } catch (error) {
+    console.error(`Workers failed to start: ${error.message}`);
+  }
+
+  scheduleCronJobs();
+  initMessengerSocket(server);
 };
 
 startServer().catch((error) => {

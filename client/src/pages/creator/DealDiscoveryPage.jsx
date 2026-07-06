@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
-import { money, daysUntil, Badge } from '../../components/campaignUtils';
+import { money, daysUntil } from '../../components/campaignUtils';
+import FitToken from '../../components/lineup/FitToken';
+import EmptyState from '../../components/lineup/EmptyState';
+import LineupScene from '../../components/lineup/LineupScene';
+import { lineupCopy } from '../../constants/lineupCopy';
 
 const NICHES = [
   'Lifestyle', 'Sports', 'Fashion', 'Travel', 'Tech',
@@ -26,17 +30,17 @@ const CampaignCard = ({ item }) => {
   return (
     <article className="panel flex flex-col p-5">
       <div className="flex gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ink text-base font-extrabold text-white">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center border-2 border-ink bg-ink font-display text-base uppercase text-paper">
           {(brand.displayName || brand.name || 'B').slice(0, 1)}
         </div>
         <div className="min-w-0">
           <p className="truncate font-extrabold text-ink">{brand.displayName || brand.name || 'Brand'}</p>
-          <p className="text-sm font-bold text-ink/45">Brand Campaign</p>
+          <p className="text-sm font-bold text-inkSoft">{lineupCopy.campaign}</p>
         </div>
         {score != null && (
-          <span className="ml-auto shrink-0 self-start rounded-full bg-[#d9f7ec] px-2.5 py-1 text-xs font-extrabold text-[#0f7655]">
-            {score}% match
-          </span>
+          <div className="ml-auto shrink-0 self-start">
+            <FitToken score={score} label="Fit" />
+          </div>
         )}
       </div>
 
@@ -46,7 +50,7 @@ const CampaignCard = ({ item }) => {
       {reasons?.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
           {reasons.slice(0, 2).map((r) => (
-            <span key={r} className="rounded-full bg-ink/[0.04] px-2.5 py-1 text-[11px] font-bold text-ink/50">{r}</span>
+            <span key={r} className="bg-accent px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-paper">{r}</span>
           ))}
         </div>
       )}
@@ -54,17 +58,17 @@ const CampaignCard = ({ item }) => {
       <div className="mt-auto pt-5 flex items-center justify-between gap-3">
         <div>
           <p className="label">Pay</p>
-          <p className="text-xl font-extrabold text-[#0f7655]">{money(campaign.budgetPerCreator)}</p>
+          <p className="font-mono-data text-xl font-extrabold text-ink">{money(campaign.budgetPerCreator)}</p>
         </div>
         {endsIn != null && (
-          <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${endsIn < 3 ? 'bg-[#ffe1df] text-[#a8322b]' : 'bg-ink/[0.06] text-ink/55'}`}>
+          <span className={`px-3 py-1 font-mono text-xs font-extrabold uppercase ${endsIn < 3 ? 'bg-accent text-paper' : 'border border-ink text-inkSoft'}`}>
             {endsIn <= 0 ? 'Closing soon' : `${endsIn}d left`}
           </span>
         )}
       </div>
 
       <Link to={`/creator/deals/${campaign._id}`} className="btn-primary mt-4 text-center">
-        View Campaign
+        View {lineupCopy.campaign}
       </Link>
     </article>
   );
@@ -82,21 +86,21 @@ const StoreDealCard = ({ item }) => {
         {store.logoImage ? (
           <img src={store.logoImage} alt={store.storeName} className="h-12 w-12 shrink-0 rounded-full object-cover" />
         ) : (
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#4140c8] text-base font-extrabold text-white">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center border-2 border-ink bg-ink font-display text-base uppercase text-paper">
             {(store.storeName || deal.title || 'S').slice(0, 1)}
           </div>
         )}
         <div className="min-w-0">
           <p className="truncate font-extrabold text-ink">
             {store.storeName || 'Store'}
-            {store.storeVerified && <span className="ml-1 text-[#4140c8]">✓</span>}
+            {store.storeVerified && <span className="ml-1 text-accent">✓</span>}
           </p>
-          <p className="text-sm font-bold text-ink/45">{store.city || deal.requirements?.location || 'Local'}</p>
+          <p className="text-sm font-bold text-inkSoft">{store.city || deal.requirements?.location || 'Local'}</p>
         </div>
         {score != null && (
-          <span className="ml-auto shrink-0 self-start rounded-full bg-[#e9ebff] px-2.5 py-1 text-xs font-extrabold text-[#4140c8]">
-            {score}% match
-          </span>
+          <div className="ml-auto shrink-0 self-start">
+            <FitToken score={score} label="Fit" />
+          </div>
         )}
       </div>
 
@@ -104,11 +108,11 @@ const StoreDealCard = ({ item }) => {
       <p className="mt-2 text-sm leading-6 text-ink/58 line-clamp-2">{deal.description}</p>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
-        <span className="rounded-full bg-[#e9ebff] px-3 py-1 text-xs font-bold text-[#4140c8]">
+        <span className="bg-accent px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-paper">
           {OFFER_TYPE_LABELS[deal.offerType] || deal.offerType}
         </span>
         {deal.flatFeeAmount > 0 && (
-          <span className="rounded-full bg-[#d9f7ec] px-3 py-1 text-xs font-bold text-[#0f7655]">
+          <span className="border border-ink px-3 py-1 font-mono text-xs font-bold text-ink">
             {money(deal.flatFeeAmount)}
           </span>
         )}
@@ -125,7 +129,7 @@ const StoreDealCard = ({ item }) => {
       </div>
 
       <Link to={`/creator/store-deals/${deal._id}`} className="btn-primary mt-4 text-center">
-        View Deal
+        View {lineupCopy.deal}
       </Link>
     </article>
   );
@@ -133,10 +137,8 @@ const StoreDealCard = ({ item }) => {
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 const Skeleton = () => (
-  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-    {Array.from({ length: 6 }).map((_, i) => (
-      <div key={i} className="h-72 animate-pulse rounded-lg border border-ink/10 bg-white" />
-    ))}
+  <div className="flex justify-center py-16">
+    <LineupScene mode="loading" />
   </div>
 );
 
@@ -200,10 +202,10 @@ const DealDiscoveryPage = () => {
     <div className="page-shell">
       {/* Header */}
       <div className="border-b border-ink/10 pb-6">
-        <div className="eyebrow">Discover</div>
-        <h1 className="mt-4 page-title">All Deals</h1>
+        <div className="eyebrow">{lineupCopy.discover}</div>
+        <h1 className="mt-4 page-title">The Bill</h1>
         <p className="page-lead max-w-lg">
-          Brand campaigns and local store visits — ranked for you, all in one place.
+          Brand shows and local opening slots — ranked for you, all in one place.
         </p>
       </div>
 
@@ -220,11 +222,7 @@ const DealDiscoveryPage = () => {
               key={opt.value}
               type="button"
               onClick={() => setTypeFilter(opt.value)}
-              className={`rounded-full px-4 py-2 text-sm font-bold transition ${
-                typeFilter === opt.value
-                  ? 'bg-ink text-white'
-                  : 'border border-ink/10 bg-white text-ink/55 hover:border-ink/25 hover:text-ink'
-              }`}
+              className={`tab-pill ${typeFilter === opt.value ? 'tab-pill-active' : 'tab-pill-inactive'}`}
             >
               {opt.label}
             </button>
@@ -271,19 +269,18 @@ const DealDiscoveryPage = () => {
         {loading ? (
           <Skeleton />
         ) : items.length === 0 ? (
-          <div className="panel p-12 text-center">
-            <p className="text-2xl font-extrabold text-ink">Nothing matches your filters</p>
-            <p className="mt-3 text-sm font-bold text-ink/45">
-              Try removing the niche or city filter, or switch between campaigns and store visits.
-            </p>
+          <div>
+            <EmptyState title="This slot's still open." message="Try removing the niche or city filter, or switch between shows and opening slots." />
             {hasFilters && (
-              <button
-                type="button"
-                className="btn-primary mt-6"
-                onClick={() => { setTypeFilter(''); setNiche(''); setCity(''); }}
-              >
-                Clear all filters
-              </button>
+              <div className="mt-6 text-center">
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={() => { setTypeFilter(''); setNiche(''); setCity(''); }}
+                >
+                  Clear all filters
+                </button>
+              </div>
             )}
           </div>
         ) : (

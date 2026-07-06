@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\"",
+    "dev": "concurrently -n server,client -c blue,green \"cd server && npm run dev\" \"wait-on http://127.0.0.1:5001/health && cd client && npm run dev\"",
     "install:all": "cd server && npm install && cd ../client && npm install"
   },
   "devDependencies": {
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "wait-on": "^8.0.1"
   }
 }

@@ -75,7 +75,7 @@ const StoreDealDetailPage = () => {
   return (
     <div className="page-shell">
       {/* Sticky header */}
-      <div className="sticky top-[74px] z-20 -mx-4 border-b border-ink/10 bg-white/90 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <div className="sticky top-[74px] z-20 -mx-4 border-b-2 border-ink bg-paper px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             {store?.storeProfile?.logoImage ? (
@@ -85,7 +85,7 @@ const StoreDealDetailPage = () => {
                 className="h-12 w-12 rounded-full object-cover"
               />
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#4140c8] font-extrabold text-white">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent font-extrabold text-white">
                 {storeName.slice(0, 1)}
               </div>
             )}
@@ -135,7 +135,7 @@ const StoreDealDetailPage = () => {
             {payAmount && (
               <div className="flex items-center justify-between rounded-lg bg-ink/[0.04] p-3 text-sm font-bold">
                 <span>Cash fee</span>
-                <span className="text-[#0f7655]">{payAmount}</span>
+                <span className="text-ink">{payAmount}</span>
               </div>
             )}
             {deal.offerDescription ? (
@@ -202,7 +202,7 @@ const StoreDealDetailPage = () => {
                 {deal.requirements.preferredNiches.map((niche) => (
                   <span
                     key={niche}
-                    className="rounded-full bg-[#e9ebff] px-3 py-1 text-xs font-bold text-[#4140c8]"
+                    className="rounded-full bg-paper border border-accent px-3 py-1 text-xs font-bold text-accent"
                   >
                     {niche}
                   </span>
@@ -251,7 +251,7 @@ const StoreDealDetailPage = () => {
                 href={`https://instagram.com/${store.storeProfile.instagramHandle}`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-3 inline-flex font-bold text-[#4140c8]"
+                className="mt-3 inline-flex font-bold text-accent"
               >
                 @{store.storeProfile.instagramHandle}
               </a>
